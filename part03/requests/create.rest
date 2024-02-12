@@ -1,0 +1,7 @@
+POST https://part3-phonebook-vaskivuori.fly.dev/api/persons
+Content-Type: application/json
+
+{
+    "name": "Testi",
+    "number": "3750257"
+}
