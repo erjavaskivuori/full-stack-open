@@ -1,1 +1,0 @@
-DELETE https://part3-phonebook-vaskivuori.fly.dev/api/persons/1
