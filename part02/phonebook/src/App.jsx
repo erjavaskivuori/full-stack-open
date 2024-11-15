@@ -66,6 +66,14 @@ const App = () => {
             setNewNumber('')
             console.log(returnedPerson)
           })
+          .catch(error => {
+            setMessageType('error')
+            setMessage(error.response.data.error || 'An error occurred')
+            setTimeout(() => {
+            setMessage(null)
+            setMessageType('')
+            }, 5000)
+          })
     }
     else if (isNew === undefined) {
       const personObject = {
@@ -85,6 +93,14 @@ const App = () => {
           setNewName('')
           setNewNumber('')
           console.log(persons)
+        })
+        .catch(error => {
+          setMessageType('error')
+          setMessage(error.response.data.error || 'An error occurred')
+          setTimeout(() => {
+          setMessage(null)
+          setMessageType('')
+          }, 5000)
         })
   }}
 
