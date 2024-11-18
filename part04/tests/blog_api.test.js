@@ -56,6 +56,19 @@ test('a blog can be added', async () => {
   assert(urls.includes('test.com'))
 })
 
+test('likes defaults to 0 if no value is given', async () => {
+  const newBlog = {
+    title: 'New blog',
+    author: 'Test Author',
+    url: 'test.com'
+  };
+
+  const response = await api.post('/api/blogs').send(newBlog).expect(201);
+
+  const savedBlog = response.body;
+  assert.strictEqual(savedBlog.likes, 0);
+});
+
 after(async () => {
   await mongoose.connection.close()
 });
