@@ -44,5 +44,5 @@ describe('when there is initially one user at db', () => {
 });
 
 after(async () => {
-  await mongoose.connection.close()
+  await mongoose.connection.close();
 });

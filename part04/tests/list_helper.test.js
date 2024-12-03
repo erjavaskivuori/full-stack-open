@@ -238,7 +238,7 @@ describe('record blogger', () => {
   test('is the one with most blogs', () => {
     const result = listHelper.mostBlogs(blogs);
     const record = {
-      author: "Robert C. Martin",
+      author: 'Robert C. Martin',
       blogs: 3
     };
     assert.deepEqual(result, record);
@@ -322,7 +322,7 @@ describe('favorite blogger', () => {
   test('is the one with most likes', () => {
     const result = listHelper.mostLikes(blogs);
     const favorite = {
-      author: "Edsger W. Dijkstra",
+      author: 'Edsger W. Dijkstra',
       likes: 17
     };
     assert.deepEqual(result, favorite);

@@ -53,7 +53,7 @@ describe('when there is initially some blogs saved', () => {
 
       assert(titles.includes('New blog'));
       assert(authors.includes('Test Author'));
-      assert(urls.includes('test.com'))
+      assert(urls.includes('test.com'));
     });
 
     test('likes defaults to 0 if no value is given', async () => {
@@ -81,7 +81,7 @@ describe('when there is initially some blogs saved', () => {
 
       const response = await api.get('/api/blogs');
 
-      assert.strictEqual(response.body.length, helper.initialBlogs.length)
+      assert.strictEqual(response.body.length, helper.initialBlogs.length);
     });
 
     test('fails if there is no url', async () => {
@@ -96,7 +96,7 @@ describe('when there is initially some blogs saved', () => {
 
       const response = await api.get('/api/blogs');
 
-      assert.strictEqual(response.body.length, helper.initialBlogs.length)
+      assert.strictEqual(response.body.length, helper.initialBlogs.length);
     });
   });
   describe('deleting a blog', async () => {
@@ -117,7 +117,7 @@ describe('when there is initially some blogs saved', () => {
     });
     test('fails with status code 400 if id is not valid', async () => {
       await api
-        .delete(`/api/blogs/3`)
+        .delete('/api/blogs/3')
         .expect(400);
 
       const blogsAtEnd = await helper.blogsInDb();
@@ -133,7 +133,7 @@ describe('when there is initially some blogs saved', () => {
 
       await api
         .put(`/api/blogs/${blogToUpdate.id}`)
-        .send({'likes': newLikes})
+        .send({ 'likes': newLikes })
         .expect(200);
 
       const blogsAtEnd = await helper.blogsInDb();
@@ -143,13 +143,13 @@ describe('when there is initially some blogs saved', () => {
     });
     test('fails with status 400 if id is not valid', async () => {
       await api
-        .put(`/api/blogs/3`)
-        .send({'likes': 4})
+        .put('/api/blogs/3')
+        .send({ 'likes': 4 })
         .expect(400);
     });
   });
 });
 
 after(async () => {
-  await mongoose.connection.close()
+  await mongoose.connection.close();
 });
