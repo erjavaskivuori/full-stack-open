@@ -98,9 +98,58 @@ describe('when there is initially some blogs saved', () => {
 
       assert.strictEqual(response.body.length, helper.initialBlogs.length)
     });
+  });
+  describe('deleting a blog', async () => {
+    test('succees with status code 204 if id is valid', async () => {
+      const blogsAtStart = await helper.blogsInDb();
+      const blogToDelete = blogsAtStart[0];
 
-    after(async () => {
-      await mongoose.connection.close()
+      await api
+        .delete(`/api/blogs/${blogToDelete.id}`)
+        .expect(204);
+
+      const blogsAtEnd = await helper.blogsInDb();
+
+      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1);
+
+      const titles = blogsAtEnd.map(b => b.title);
+      assert(!titles.includes(blogToDelete.title));
+    });
+    test('fails with status code 400 if id is not valid', async () => {
+      await api
+        .delete(`/api/blogs/3`)
+        .expect(400);
+
+      const blogsAtEnd = await helper.blogsInDb();
+
+      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length);
     });
   });
+  describe('updating a blog', async () => {
+    test('succees with status code 200 if id is valid', async () => {
+      const blogsAtStart = await helper.blogsInDb();
+      const blogToUpdate = blogsAtStart[0];
+      const newLikes = blogToUpdate.likes + 1;
+
+      await api
+        .put(`/api/blogs/${blogToUpdate.id}`)
+        .send({'likes': newLikes})
+        .expect(200);
+
+      const blogsAtEnd = await helper.blogsInDb();
+      const updatedBlog = blogsAtEnd[0];
+
+      assert.strictEqual(updatedBlog.likes, newLikes);
+    });
+    test('fails with status 400 if id is not valid', async () => {
+      await api
+        .put(`/api/blogs/3`)
+        .send({'likes': 4})
+        .expect(400);
+    });
+  });
+});
+
+after(async () => {
+  await mongoose.connection.close()
 });
