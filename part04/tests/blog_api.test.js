@@ -69,6 +69,36 @@ test('likes defaults to 0 if no value is given', async () => {
   assert.strictEqual(savedBlog.likes, 0);
 });
 
+test('blog without title is not added', async () => {
+  const newBlog = {
+    title: '',
+    author: 'Test Author',
+    url: 'test.com',
+    likes: 10
+  };
+
+  await api.post('/api/blogs').send(newBlog).expect(400);
+
+  const response = await api.get('/api/blogs');
+
+  assert.strictEqual(response.body.length, helper.initialBlogs.length)
+});
+
+test('blog without url is not added', async () => {
+  const newBlog = {
+    title: 'Test Title',
+    author: 'Test Author',
+    url: '',
+    likes: 10
+  };
+
+  await api.post('/api/blogs').send(newBlog).expect(400);
+
+  const response = await api.get('/api/blogs');
+
+  assert.strictEqual(response.body.length, helper.initialBlogs.length)
+});
+
 after(async () => {
   await mongoose.connection.close()
 });
