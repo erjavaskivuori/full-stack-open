@@ -88,6 +88,25 @@ describe('when there is initially some blogs saved', () => {
       assert.strictEqual(savedBlog.likes, 0);
     });
 
+    test('fails if there is no token', async () => {
+      const newBlog = {
+        title: 'New blog',
+        author: 'Test Author',
+        url: 'test.com',
+        likes: 10
+      };
+
+      await api
+        .post('/api/blogs')
+        .set('Authorization', 'Bearer ')
+        .send(newBlog)
+        .expect(401);
+
+      const response = await api.get('/api/blogs');
+
+      assert.strictEqual(response.body.length, helper.initialBlogs.length);
+    });
+
     test('fails if there is no title', async () => {
       const newBlog = {
         title: '',
