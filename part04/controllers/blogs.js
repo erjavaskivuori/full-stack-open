@@ -33,7 +33,11 @@ blogsRouter.post('/', async (request, response) => {
 });
 
 blogsRouter.delete('/:id', async (request, response) => {
-  await Blog.findByIdAndDelete(request.params.id);
+  const blog = await Blog.findById(request.params.id);
+  const userid = jwt.verify(request.token, process.env.SECRET).id;
+  if ( blog.user.toString() === userid.toString() ) {
+    await Blog.deleteOne(blog);
+  };
   response.status(204).end();
 });
 
