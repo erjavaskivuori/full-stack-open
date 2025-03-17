@@ -8,6 +8,18 @@ const app = require('../app');
 
 const api = supertest(app);
 
+const getToken = async () => {
+  await helper.createOneUser();
+
+  const user = {
+    username: 'testuser',
+    password: 'test_password'
+  };
+
+  const response = await api.post('/api/login').send(user);
+  return response.body.token;
+};
+
 describe('when there is initially some blogs saved', () => {
   beforeEach(async () => {
     await Blog.deleteMany({});
@@ -41,7 +53,10 @@ describe('when there is initially some blogs saved', () => {
         likes: 10
       };
 
-      await api.post('/api/blogs').send(newBlog);
+      await api
+        .post('/api/blogs')
+        .set('Authorization', `Bearer ${await getToken()}`)
+        .send(newBlog);
 
       const response = await api.get('/api/blogs');
 
@@ -63,7 +78,11 @@ describe('when there is initially some blogs saved', () => {
         url: 'test.com'
       };
 
-      const response = await api.post('/api/blogs').send(newBlog).expect(201);
+      const response = await api
+        .post('/api/blogs')
+        .set('Authorization', `Bearer ${await getToken()}`)
+        .send(newBlog)
+        .expect(201);
 
       const savedBlog = response.body;
       assert.strictEqual(savedBlog.likes, 0);
@@ -77,7 +96,11 @@ describe('when there is initially some blogs saved', () => {
         likes: 10
       };
 
-      await api.post('/api/blogs').send(newBlog).expect(400);
+      await api
+        .post('/api/blogs')
+        .set('Authorization', `Bearer ${await getToken()}`)
+        .send(newBlog)
+        .expect(400);
 
       const response = await api.get('/api/blogs');
 
@@ -92,7 +115,11 @@ describe('when there is initially some blogs saved', () => {
         likes: 10
       };
 
-      await api.post('/api/blogs').send(newBlog).expect(400);
+      await api
+        .post('/api/blogs')
+        .set('Authorization', `Bearer ${await getToken()}`)
+        .send(newBlog)
+        .expect(400);
 
       const response = await api.get('/api/blogs');
 
@@ -101,16 +128,31 @@ describe('when there is initially some blogs saved', () => {
   });
   describe('deleting a blog', async () => {
     test('succees with status code 204 if id is valid', async () => {
+      const newBlog = {
+        title: 'New blog',
+        author: 'Test Author',
+        url: 'test.com',
+        likes: 10
+      };
+
+      const token = await getToken();
+
+      const response = await api
+        .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
+        .send(newBlog);
+
+      const blogToDelete = response.body;
       const blogsAtStart = await helper.blogsInDb();
-      const blogToDelete = blogsAtStart[0];
 
       await api
         .delete(`/api/blogs/${blogToDelete.id}`)
+        .set('Authorization', `Bearer ${token}`)
         .expect(204);
 
       const blogsAtEnd = await helper.blogsInDb();
 
-      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1);
+      assert.strictEqual(blogsAtEnd.length, blogsAtStart.length - 1);
 
       const titles = blogsAtEnd.map(b => b.title);
       assert(!titles.includes(blogToDelete.title));
@@ -118,6 +160,7 @@ describe('when there is initially some blogs saved', () => {
     test('fails with status code 400 if id is not valid', async () => {
       await api
         .delete('/api/blogs/3')
+        .set('Authorization', `Bearer ${await getToken()}`)
         .expect(400);
 
       const blogsAtEnd = await helper.blogsInDb();
