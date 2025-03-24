@@ -26,25 +26,34 @@ const BlogForm = ({
       <h2>Create new</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          title 
+          <label>
+            title
             <input
-            value={title}
-            onChange={({ target }) => setTitle(target.value)}
-          />
+              value={title}
+              onChange={({ target }) => setTitle(target.value)}
+              style={{ marginLeft: '10px' }}
+            />
+          </label>
         </div>
         <div>
-          author 
+          <label>
+            author
             <input
-            value={author}
-            onChange={({ target }) => setAuthor(target.value)}
-          />
+              value={author}
+              onChange={({ target }) => setAuthor(target.value)}
+              style={{ marginLeft: '10px' }}
+            />
+          </label>
         </div>
         <div>
-          url 
+          <label>
+            url
             <input
-            value={url}
-            onChange={({ target }) => setUrl(target.value)}
-          />
+              value={url}
+              onChange={({ target }) => setUrl(target.value)}
+              style={{ marginLeft: '10px' }}
+            />
+          </label>
         </div>
         <button type="submit">create</button>
       </form>

@@ -1,0 +1,18 @@
+body {
+  padding: 10px;
+  font-size: 16px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button {
+  padding: 5px 10px;
+  font-size: 14px;
+  margin: 5px;
+  border: 1px solid #000;
+  border-radius: 7px;
+  background-color: #f0f0f0;
+}
+
+div {
+  margin: 4px 0;
+}

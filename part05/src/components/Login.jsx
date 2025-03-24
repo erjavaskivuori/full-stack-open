@@ -17,20 +17,26 @@ const LoginForm = ({
   
         <form onSubmit={handleLogin}>
           <div>
-            username
-            <input
-              value={username}
-              onChange={({ target }) => setUsername(target.value)}
-            />
+            <label>
+              username
+              <input
+                value={username}
+                onChange={({ target }) => setUsername(target.value)}
+                style={{ marginLeft: '10px'}}
+              />
+            </label>
           </div>
           <div>
-            password
-            <input
-              type="password"
-              value={password}
-              onChange={({ target }) => setPassword(target.value)}
-            />
-        </div>
+            <label>
+              password
+              <input
+                type="password"
+                value={password}
+                onChange={({ target }) => setPassword(target.value)}
+                style={{ marginLeft: '10px' }}
+              />
+            </label>
+          </div>
           <button type="submit">login</button>
         </form>
       </div>
