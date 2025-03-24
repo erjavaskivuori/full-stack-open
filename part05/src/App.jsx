@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import LoginForm from './components/Login'
@@ -12,6 +12,8 @@ const App = () => {
   const [message, setMessage] = useState(null)
   const [messageType, setMessageType] = useState('')
   const [user, setUser] = useState(null)
+
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -58,6 +60,7 @@ const App = () => {
       const blog = await blogService.create(
         blogObject
       )
+      blogFormRef.current.toggleVisibility()
       setBlogs(blogs.concat(blog))
 
       setMessage(`A new blog ${blog.title} by ${blog.author} added`)
@@ -91,7 +94,7 @@ const App = () => {
       <h2>Blogs</h2>
       <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
       <Notification message={message} type={messageType} />
-      <Togglable buttonLabel='new blog'>
+      <Togglable buttonLabel='new blog' ref={blogFormRef}>
         <BlogForm createBlog={createBlog} />
       </Togglable>
       <div>
