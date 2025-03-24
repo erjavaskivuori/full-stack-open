@@ -3,6 +3,7 @@ import Blog from './components/Blog'
 import Notification from './components/Notification'
 import LoginForm from './components/Login'
 import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -10,12 +11,7 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [message, setMessage] = useState(null)
   const [messageType, setMessageType] = useState('')
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -32,22 +28,16 @@ const App = () => {
     }
   }, [])
 
-  const handleLogin = async (event) => {
-    event.preventDefault()
-
+  const login = async (username, password) => {
     try {
       const user = await loginService.login({
         username, password,
       })
-
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
       )
-
       blogService.setToken(user.token)
       setUser(user)
-      setUsername('')
-      setPassword('')
     } catch {
         setMessage('wrong username or password')
         setMessageType('error')
@@ -63,13 +53,7 @@ const App = () => {
     setUser(null)
   }
 
-  const handleCreateBlog = async (event) => {
-    event.preventDefault()
-    const blogObject = {
-      title: title,
-      author: author,
-      url: url,
-    }
+  const createBlog = async (blogObject) => {
     try {
       const blog = await blogService.create(
         blogObject
@@ -82,10 +66,6 @@ const App = () => {
         setMessage(null)
         setMessageType('')
       }, 5000)
-
-      setTitle('')
-      setAuthor('')
-      setUrl('')
     } catch (exception) {
       setMessage('Error occured while creating a new blog. Did you fill all the fields?')
       setMessageType('error')
@@ -101,13 +81,7 @@ const App = () => {
     return (
       <div>
         <Notification message={message} type={messageType} />
-        <LoginForm
-          username={username}
-          password={password}
-          handleUsernameChange={({ target }) => setUsername(target.value)}
-          handlePasswordChange={({ target }) => setPassword(target.value)}
-          handleSubmit={handleLogin}
-        />
+        <LoginForm login={login} />
       </div>
     )
   }
@@ -117,15 +91,9 @@ const App = () => {
       <h2>Blogs</h2>
       <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
       <Notification message={message} type={messageType} />
-      <BlogForm
-        title={title}
-        author={author}
-        url={url}
-        handleTitleChange={({ target }) => setTitle(target.value)}
-        handleAuthorChange={({ target }) => setAuthor(target.value)}
-        handleUrlChange={({ target }) => setUrl(target.value)}
-        handleSubmit={handleCreateBlog}
-      />
+      <Togglable buttonLabel='new blog'>
+        <BlogForm createBlog={createBlog} />
+      </Togglable>
       <div>
         <br />
         {blogs.map(blog =>
