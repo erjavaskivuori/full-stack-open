@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import LoginForm from './components/Login'
+import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
 const App = () => {
-  const [loginVisible, setLoginVisible] = useState(false)
   const [blogs, setBlogs] = useState([])
   const [message, setMessage] = useState(null)
   const [messageType, setMessageType] = useState('')
@@ -97,69 +97,43 @@ const App = () => {
     }
   }
 
-  const newBlogForm = () => (
-    <form onSubmit={handleCreateBlog}>
-      <h2>Create new</h2>
-      <div>
-        title:
-          <input
-          type="text"
-          value={title}
-          name="Title"
-          onChange={({ target }) => setTitle(target.value)}
-        />
-      </div>
-      <div>
-        author:
-          <input
-          type="text"
-          value={author}
-          name="Author"
-          onChange={({ target }) => setAuthor(target.value)}
-        />
-      </div>
-      <div>
-        url:
-          <input
-          type="text"
-          value={url}
-          name="Url"
-          onChange={({ target }) => setUrl(target.value)}
-        />
-      </div>
-      <button type="submit" >create</button>
-    </form>
-  )
-
-    if (user === null) {
-      return (
-        <div>
-          <Notification message={message} type={messageType} />
-          <LoginForm
-            username={username}
-            password={password}
-            handleUsernameChange={({ target }) => setUsername(target.value)}
-            handlePasswordChange={({ target }) => setPassword(target.value)}
-            handleSubmit={handleLogin}
-          />
-        </div>
-      )
-    }
-
+  if (user === null) {
     return (
       <div>
-        <h2>Blogs</h2>
-        <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
         <Notification message={message} type={messageType} />
-        {newBlogForm()}
-        <div>
-          <br />
-          {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
-          )}
-        </div>
+        <LoginForm
+          username={username}
+          password={password}
+          handleUsernameChange={({ target }) => setUsername(target.value)}
+          handlePasswordChange={({ target }) => setPassword(target.value)}
+          handleSubmit={handleLogin}
+        />
       </div>
     )
   }
+
+  return (
+    <div>
+      <h2>Blogs</h2>
+      <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
+      <Notification message={message} type={messageType} />
+      <BlogForm
+        title={title}
+        author={author}
+        url={url}
+        handleTitleChange={({ target }) => setTitle(target.value)}
+        handleAuthorChange={({ target }) => setAuthor(target.value)}
+        handleUrlChange={({ target }) => setUrl(target.value)}
+        handleSubmit={handleCreateBlog}
+      />
+      <div>
+        <br />
+        {blogs.map(blog =>
+          <Blog key={blog.id} blog={blog} />
+        )}
+      </div>
+    </div>
+  )
+}
 
 export default App
