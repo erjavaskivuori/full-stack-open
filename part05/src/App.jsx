@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [message, setMessage] = useState(null)
+  const [messageType, setMessageType] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -44,11 +46,13 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-    } catch (exception) {
-      setErrorMessage('wrong credentials')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+    } catch {
+        setMessage('wrong username or password')
+        setMessageType('error')
+        setTimeout(() => {
+          setMessage(null)
+          setMessageType('')
+        }, 5000)
     }
   }
 
@@ -64,16 +68,32 @@ const App = () => {
       author: author,
       url: url,
     }
-
-    const blog = await blogService.create(
+    try {
+      const blog = await blogService.create(
         blogObject
-    )
+      )
+      setBlogs(blogs.concat(blog))
 
-    setBlogs(blogs.concat(blog))
-    setTitle('')
-    setAuthor('')
-    setUrl('')
+      setMessage(`A new blog ${blog.title} by ${blog.author} added`)
+      setMessageType('success')
+      setTimeout(() => {
+        setMessage(null)
+        setMessageType('')
+      }, 5000)
+
+      setTitle('')
+      setAuthor('')
+      setUrl('')
+    } catch (exception) {
+      setMessage('Error occured while creating a new blog. Did you fill all the fields?')
+      setMessageType('error')
+      setTimeout(() => {
+        setMessage(null)
+        setMessageType('')
+      }, 5000
+      )
     }
+  }
 
   const loginForm = () => (
     <form onSubmit={handleLogin}>
@@ -137,6 +157,7 @@ const App = () => {
     if (user === null) {
       return (
         <div>
+          <Notification message={message} type={messageType} />
           {loginForm()}
         </div>
       )
@@ -146,6 +167,7 @@ const App = () => {
       <div>
         <h2>Blogs</h2>
         <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
+        <Notification message={message} type={messageType} />
         {newBlogForm()}
         <div>
           <br />
