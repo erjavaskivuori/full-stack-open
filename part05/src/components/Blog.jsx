@@ -45,18 +45,18 @@ const Blog = ({ blog, addLike, removeBlog, user }) => {
         <div>{blog.user ? blog.user.name : 'Unknown User'}</div>
         <button onClick={() => setBlogVisible(false)}>hide</button>
         {blog.user ? blog.user.username === user.username
-        ? <button
+          ? <button
             onClick={handleRemoveBlog}
             style={{
-              backgroundColor: "red",
-              color: "white",
-              }}>
+              backgroundColor: 'red',
+              color: 'white',
+            }}>
             remove
-          </button> 
-        : null : null
+          </button>
+          : null : null
         }
       </div>
     </div>
-)}
+  )}
 
 export default Blog

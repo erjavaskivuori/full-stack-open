@@ -18,7 +18,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -50,7 +50,7 @@ const App = () => {
       blogService.setToken(user.token)
       setUser(user)
     } catch {
-        setNotification('wrong username or password', 'error')
+      setNotification('wrong username or password', 'error')
     }
   }
 

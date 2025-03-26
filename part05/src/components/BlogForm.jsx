@@ -7,19 +7,19 @@ const BlogForm = ({
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
-    const handleSubmit = async (event) => {
-      event.preventDefault()
-      const blogObject = {
-        title: title,
-        author: author,
-        url: url,
-      }
-      createBlog(blogObject)
-
-      setTitle('')
-      setAuthor('')
-      setUrl('')
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    const blogObject = {
+      title: title,
+      author: author,
+      url: url,
     }
+    createBlog(blogObject)
+
+    setTitle('')
+    setAuthor('')
+    setUrl('')
+  }
 
   return (
     <div>
