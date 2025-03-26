@@ -30,6 +30,15 @@ const App = () => {
     }
   }, [])
 
+  const setNotification = (message, type) => {
+    setMessage(message)
+    setMessageType(type)
+    setTimeout(() => {
+      setMessage(null)
+      setMessageType('')
+    }, 5000)
+  }
+
   const login = async (username, password) => {
     try {
       const user = await loginService.login({
@@ -41,12 +50,7 @@ const App = () => {
       blogService.setToken(user.token)
       setUser(user)
     } catch {
-        setMessage('wrong username or password')
-        setMessageType('error')
-        setTimeout(() => {
-          setMessage(null)
-          setMessageType('')
-        }, 5000)
+        setNotification('wrong username or password', 'error')
     }
   }
 
@@ -63,20 +67,9 @@ const App = () => {
       blogFormRef.current.toggleVisibility()
       setBlogs(blogs.concat(blog))
 
-      setMessage(`A new blog ${blog.title} by ${blog.author} added`)
-      setMessageType('success')
-      setTimeout(() => {
-        setMessage(null)
-        setMessageType('')
-      }, 5000)
+      setNotification(`A new blog ${blog.title} by ${blog.author} added`, 'success')
     } catch (exception) {
-      setMessage('Error occured while creating a new blog. Did you fill all the fields?')
-      setMessageType('error')
-      setTimeout(() => {
-        setMessage(null)
-        setMessageType('')
-      }, 5000
-      )
+      setNotification('Error occured while creating a new blog. Did you fill all the fields?', 'error')
     }
   }
 
@@ -86,22 +79,9 @@ const App = () => {
         id, blogObject
       )
       setBlogs(blogs.map(blog => blog.id !== id ? blog : updatedBlog))
-      setMessage(`A like added to the blog ${updatedBlog.title}`)
-      setMessageType('success')
-      setTimeout(() => {
-        setMessage(null)
-        setMessageType('')
-      }
-      , 500
-      )
+      setNotification(`A like added to the blog ${updatedBlog.title}`, 'success')
     } catch (exception) {
-      setMessage('Error occured while adding a like to the blog')
-      setMessageType('error')
-      setTimeout(() => {
-        setMessage(null)
-        setMessageType('')
-      }, 500
-      )
+      setNotification('Error occured while adding a like to the blog', 'error')
     }
   }
 
