@@ -2,87 +2,58 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog';
 
-test('only title and author are rendered initially', () => {
-  const blog = {
-    title: 'Testing is important',
-    author: 'Bob Tester',
-    url: 'https://example.com',
-    likes: 42,
-    user: {
-      username: 'ada',
-      name: 'Ada Lovelace',
-    },
-  };
-
-  const user = {
+const blog = {
+  title: 'Testing is important',
+  author: 'Bob Tester',
+  url: 'https://example.com',
+  likes: 42,
+  user: {
     username: 'ada',
     name: 'Ada Lovelace',
-  };
+  },
+};
 
-  render(<Blog blog={blog} user={user} />);
-  expect(screen.queryByText('Testing is important by Bob Tester')).toBeInTheDocument();
-  expect(screen.queryByText('https://example.com')).not.toBeInTheDocument();
-  expect(screen.queryByText('likes 42')).not.toBeInTheDocument();
-  expect(screen.queryByText('Ada Lovelace')).not.toBeInTheDocument();
-});
+const blogUser = {
+  username: 'ada',
+  name: 'Ada Lovelace',
+};
 
-test('url, likes and user are rendered after clicking the view button', async () => {
-  const blog = {
-    title: 'Testing is important',
-    author: 'Bob Tester',
-    url: 'https://example.com',
-    likes: 42,
-    user: {
-      username: 'ada',
-      name: 'Ada Lovelace',
-    },
-  };
+describe('<Blog />', () => {
+  test('only title and author are rendered initially', () => {
+    render(<Blog blog={blog} user={blogUser} />);
 
-  const blogUser = {
-    username: 'ada',
-    name: 'Ada Lovelace',
-  };
+    expect(screen.queryByText('Testing is important by Bob Tester')).toBeInTheDocument();
+    expect(screen.queryByText('https://example.com')).not.toBeInTheDocument();
+    expect(screen.queryByText('likes 42')).not.toBeInTheDocument();
+    expect(screen.queryByText('Ada Lovelace')).not.toBeInTheDocument();
+  });
 
-  render(<Blog blog={blog} user={blogUser} />);
+  test('url, likes and user are rendered after clicking the view button', async () => {
+    render(<Blog blog={blog} user={blogUser} />);
 
-  const user = userEvent.setup();
-  const button = screen.getByText('view');
-  await user.click(button);
+    const user = userEvent.setup();
+    const button = screen.getByText('view');
+    await user.click(button);
 
-  expect(screen.queryByText('Testing is important by Bob Tester')).toBeInTheDocument();
-  expect(screen.queryByText('https://example.com')).toBeInTheDocument();
-  expect(screen.queryByText('likes 42')).toBeInTheDocument();
-  expect(screen.queryByText('Ada Lovelace')).toBeInTheDocument();
-});
+    expect(screen.queryByText('Testing is important by Bob Tester')).toBeInTheDocument();
+    expect(screen.queryByText('https://example.com')).toBeInTheDocument();
+    expect(screen.queryByText('likes 42')).toBeInTheDocument();
+    expect(screen.queryByText('Ada Lovelace')).toBeInTheDocument();
+  });
 
-test('clicking the like button twice calls the event handler twice', async () => {
-  const blog = {
-    title: 'Testing is important',
-    author: 'Bob Tester',
-    url: 'https://example.com',
-    likes: 42,
-    user: {
-      username: 'ada',
-      name: 'Ada Lovelace',
-    },
-  };
+  test('clicking the like button twice calls the event handler twice', async () => {
+    const addLike = vi.fn();
 
-  const blogUser = {
-    username: 'ada',
-    name: 'Ada Lovelace',
-  };
+    render(<Blog blog={blog} user={blogUser} addLike={addLike} />);
 
-  const addLike = vi.fn();
+    const user = userEvent.setup();
+    const viewButton = screen.getByText('view');
+    await user.click(viewButton);
 
-  render(<Blog blog={blog} user={blogUser} addLike={addLike} />);
+    const likeButton = screen.getByText('like');
+    await user.click(likeButton);
+    await user.click(likeButton);
 
-  const user = userEvent.setup();
-  const viewButton = screen.getByText('view');
-  await user.click(viewButton);
-
-  const likeButton = screen.getByText('like');
-  await user.click(likeButton);
-  await user.click(likeButton);
-
-  expect(addLike.mock.calls).toHaveLength(2);
+    expect(addLike.mock.calls).toHaveLength(2);
+  });
 });
