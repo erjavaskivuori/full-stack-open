@@ -63,6 +63,7 @@ describe('Blog app', () => {
 
       await expect(likesElement).toHaveText(`likes ${likesBeginning + 1}`);
     })
+
     test('a blog can be removed', async ({ page }) => {
       await createBlog(page, 'Blog created by Playwright', 'Test Author', 'https://playwright.dev')
       const newBlog = page.getByTestId('blog-container')
@@ -74,6 +75,23 @@ describe('Blog app', () => {
       await newBlog.getByText('remove').click()
       await expect(page.getByText('Blog deleted successfully')).toBeVisible()
       await expect(newBlog).toHaveCount(0);
+    })
+
+    test('remove button is not shown for blogs created by other users', async ({ page }) => {
+      await createBlog(page, 'Blog created by Playwright', 'Test Author', 'https://playwright.dev')
+
+      const newBlog = page.getByTestId('blog-container')
+        .filter({ has: page.getByRole('heading', { name: 'Blog created by Playwright by Test Author' }) })
+      await expect(newBlog).toBeVisible()
+      page.reload()
+
+      const initialBlog = page.getByTestId('blog-container')
+        .filter({ has: page.getByRole('heading', { name: 'React patterns by Michael Chan' }) })
+
+      await initialBlog.getByText('view').click()
+      await newBlog.getByText('view').click()
+      await expect(initialBlog.getByText('remove')).not.toBeVisible()
+      await expect(newBlog.getByText('remove')).toBeVisible()
     })
   })
 })
