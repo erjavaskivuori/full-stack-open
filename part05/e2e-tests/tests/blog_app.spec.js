@@ -53,11 +53,15 @@ describe('Blog app', () => {
     })
 
     test('a blog can be liked', async ({ page }) => {
-      await createBlog(page, 'Blog created by Playwright', 'Test Author', 'https://playwright.dev')
-
       await page.getByText('view').click()
-      await page.getByText('like').click()
-      await expect(page.getByText('likes 1')).toBeVisible()
+
+      const likesElement = page.getByTestId('like-count')
+      const likesText = await likesElement.innerText()
+      const likesBeginning = parseInt(likesText.split(' ')[1], 10)
+
+      await page.getByRole('button', { name: 'like' }).click()
+
+      await expect(likesElement).toHaveText(`likes ${likesBeginning + 1}`);
     })
   })
 })
