@@ -1,4 +1,5 @@
-import { render, screen, act } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event'
 import Blog from './Blog';
 
 test('only title and author are rendered initially', () => {
@@ -25,7 +26,7 @@ test('only title and author are rendered initially', () => {
   expect(screen.queryByText('Ada Lovelace')).not.toBeInTheDocument();
 });
 
-test('url, likes and user are rendered after clicking the view button', () => {
+test('url, likes and user are rendered after clicking the view button', async () => {
   const blog = {
     title: 'Testing is important',
     author: 'Bob Tester',
@@ -37,15 +38,16 @@ test('url, likes and user are rendered after clicking the view button', () => {
     },
   };
 
-  const user = {
+  const blogUser = {
     username: 'ada',
     name: 'Ada Lovelace',
   };
 
-  render(<Blog blog={blog} user={user} />);
-  act(() => {
-    screen.getByText('view').click();
-  });
+  render(<Blog blog={blog} user={blogUser} />);
+
+  const user = userEvent.setup();
+  const button = screen.getByText('view');
+  await user.click(button);
 
   expect(screen.queryByText('Testing is important by Bob Tester')).toBeInTheDocument();
   expect(screen.queryByText('https://example.com')).toBeInTheDocument();
