@@ -3,9 +3,6 @@ import { useState } from 'react'
 const Blog = ({ blog, addLike, removeBlog, user }) => {
   const [blogVisible, setBlogVisible] = useState(false)
 
-  const hideWhenVisible = { display: blogVisible ? 'none' : '' }
-  const showWhenVisible = { display: blogVisible ? '' : 'none' }
-
   const handleLike = async () => {
     const blogObject = {
       title: blog.title,
@@ -34,28 +31,29 @@ const Blog = ({ blog, addLike, removeBlog, user }) => {
   return (
     <div style={blogStyle}>
       <h3>{blog.title} by {blog.author}</h3>
-      <div style={hideWhenVisible}>
+      {!blogVisible && (
         <button onClick={() => setBlogVisible(true)}>view</button>
-      </div>
-      <div style={showWhenVisible}>
-        <div>{blog.url}</div>
-        <div>likes {blog.likes}
-          <button onClick={handleLike}>like</button>
+      )}
+      {blogVisible && (
+        <div>
+          <div>{blog.url}</div>
+          <div>likes {blog.likes}
+            <button onClick={handleLike}>like</button>
+          </div>
+          <div>{blog.user ? blog.user.name : 'Unknown User'}</div>
+          <button onClick={() => setBlogVisible(false)}>hide</button>
+          {blog.user && blog.user.username === user.username && (
+            <button
+              onClick={handleRemoveBlog}
+              style={{
+                backgroundColor: 'red',
+                color: 'white',
+              }}>
+              remove
+            </button>
+          )}
         </div>
-        <div>{blog.user ? blog.user.name : 'Unknown User'}</div>
-        <button onClick={() => setBlogVisible(false)}>hide</button>
-        {blog.user ? blog.user.username === user.username
-          ? <button
-            onClick={handleRemoveBlog}
-            style={{
-              backgroundColor: 'red',
-              color: 'white',
-            }}>
-            remove
-          </button>
-          : null : null
-        }
-      </div>
+      )}
     </div>
   )}
 
