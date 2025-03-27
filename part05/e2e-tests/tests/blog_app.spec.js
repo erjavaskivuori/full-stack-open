@@ -63,5 +63,17 @@ describe('Blog app', () => {
 
       await expect(likesElement).toHaveText(`likes ${likesBeginning + 1}`);
     })
+    test('a blog can be removed', async ({ page }) => {
+      await createBlog(page, 'Blog created by Playwright', 'Test Author', 'https://playwright.dev')
+      const newBlog = page.getByTestId('blog-container')
+        .filter({ has: page.getByRole('heading', { name: 'Blog created by Playwright by Test Author' }) })
+      await expect(newBlog).toBeVisible()
+      page.reload()
+      await newBlog.getByText('view').click()
+      page.on('dialog', dialog => dialog.accept())
+      await newBlog.getByText('remove').click()
+      await expect(page.getByText('Blog deleted successfully')).toBeVisible()
+      await expect(newBlog).toHaveCount(0);
+    })
   })
 })
