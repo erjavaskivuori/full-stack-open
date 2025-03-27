@@ -51,5 +51,13 @@ describe('Blog app', () => {
           { name: 'Blog created by Playwright by Test Author' }))
         .toBeVisible()
     })
+
+    test('a blog can be liked', async ({ page }) => {
+      await createBlog(page, 'Blog created by Playwright', 'Test Author', 'https://playwright.dev')
+
+      await page.getByText('view').click()
+      await page.getByText('like').click()
+      await expect(page.getByText('likes 1')).toBeVisible()
+    })
   })
 })
