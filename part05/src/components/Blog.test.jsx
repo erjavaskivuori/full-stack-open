@@ -1,7 +1,7 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import Blog from './Blog';
 
-test('renders content', () => {
+test('only title and author are rendered initially', () => {
   const blog = {
     title: 'Testing is important',
     author: 'Bob Tester',
@@ -23,4 +23,32 @@ test('renders content', () => {
   expect(screen.queryByText('https://example.com')).not.toBeInTheDocument();
   expect(screen.queryByText('likes 42')).not.toBeInTheDocument();
   expect(screen.queryByText('Ada Lovelace')).not.toBeInTheDocument();
+});
+
+test('url, likes and user are rendered after clicking the view button', () => {
+  const blog = {
+    title: 'Testing is important',
+    author: 'Bob Tester',
+    url: 'https://example.com',
+    likes: 42,
+    user: {
+      username: 'ada',
+      name: 'Ada Lovelace',
+    },
+  };
+
+  const user = {
+    username: 'ada',
+    name: 'Ada Lovelace',
+  };
+
+  render(<Blog blog={blog} user={user} />);
+  act(() => {
+    screen.getByText('view').click();
+  });
+
+  expect(screen.queryByText('Testing is important by Bob Tester')).toBeInTheDocument();
+  expect(screen.queryByText('https://example.com')).toBeInTheDocument();
+  expect(screen.queryByText('likes 42')).toBeInTheDocument();
+  expect(screen.queryByText('Ada Lovelace')).toBeInTheDocument();
 });
