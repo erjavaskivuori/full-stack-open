@@ -37,7 +37,8 @@ const Blog = ({ blog, addLike, removeBlog, user }) => {
       {blogVisible && (
         <div>
           <div>{blog.url}</div>
-          <div>likes {blog.likes}
+          <div>
+            <span data-testid='like-count'>likes {blog.likes}</span>
             <button onClick={handleLike}>like</button>
           </div>
           <div>{blog.user ? blog.user.name : 'Unknown User'}</div>
