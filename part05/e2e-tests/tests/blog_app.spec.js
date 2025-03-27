@@ -17,13 +17,31 @@ describe('Blog app', () => {
 
   test('Login form is shown', async ({ page }) => {
     const header = page.getByRole('heading', { name: 'Login' })
-    const username = page.getByLabel('username')
-    const password = page.getByLabel('password')
+    const usernameField = page.getByLabel('username')
+    const passwordField = page.getByLabel('password')
     const loginButton = page.getByRole('button', { name: 'login' })
 
     await expect(header).toBeVisible()
-    await expect(username).toBeVisible()
-    await expect(password).toBeVisible()
+    await expect(usernameField).toBeVisible()
+    await expect(passwordField).toBeVisible()
     await expect(loginButton).toBeVisible()
+  })
+
+  describe('Login', () => {
+    test('succeeds with correct credentials', async ({ page }) => {
+      await page.getByLabel('username').fill('mluukkai')
+      await page.getByLabel('password').fill('salainen')
+      await page.getByRole('button', { name: 'login' }).click()
+
+      await expect(page.getByText('Matti Luukkainen logged in')).toBeVisible()
+    })
+
+    test('fails with wrong credentials', async ({ page }) => {
+      await page.getByLabel('username').fill('mluukkai')
+      await page.getByLabel('password').fill('wrong_pswd')
+      await page.getByRole('button', { name: 'login' }).click()
+
+      await expect(page.getByText('wrong username or password')).toBeVisible()
+    })
   })
 })
