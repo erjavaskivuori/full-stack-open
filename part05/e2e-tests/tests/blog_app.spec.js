@@ -93,5 +93,24 @@ describe('Blog app', () => {
       await expect(initialBlog.getByText('remove')).not.toBeVisible()
       await expect(newBlog.getByText('remove')).toBeVisible()
     })
+
+    test('blogs are ordered by likes', async ({ page }) => {
+      await createBlog(page, 'Blog created by Playwright', 'Test Author', 'https://playwright.dev')
+
+      const newBlog = page.getByTestId('blog-container')
+        .filter({ has: page.getByRole('heading', { name: 'Blog created by Playwright by Test Author' }) })
+      await expect(newBlog).toBeVisible()
+
+      const initialOrder = await page.getByTestId('blog-container').allInnerTexts()
+      await newBlog.getByText('view').click()
+
+      const likeButton = newBlog.getByRole('button', { name: 'like' })
+      for (let i = 0; i < 5; i++) {
+        await likeButton.click()
+      }
+      await newBlog.getByText('hide').click()
+      const updatedOrder = page.getByTestId('blog-container').allInnerTexts()
+      expect(updatedOrder).not.toEqual(initialOrder);
+    })
   })
 })
