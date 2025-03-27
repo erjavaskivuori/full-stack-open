@@ -54,3 +54,35 @@ test('url, likes and user are rendered after clicking the view button', async ()
   expect(screen.queryByText('likes 42')).toBeInTheDocument();
   expect(screen.queryByText('Ada Lovelace')).toBeInTheDocument();
 });
+
+test('clicking the like button twice calls the event handler twice', async () => {
+  const blog = {
+    title: 'Testing is important',
+    author: 'Bob Tester',
+    url: 'https://example.com',
+    likes: 42,
+    user: {
+      username: 'ada',
+      name: 'Ada Lovelace',
+    },
+  };
+
+  const blogUser = {
+    username: 'ada',
+    name: 'Ada Lovelace',
+  };
+
+  const addLike = vi.fn();
+
+  render(<Blog blog={blog} user={blogUser} addLike={addLike} />);
+
+  const user = userEvent.setup();
+  const viewButton = screen.getByText('view');
+  await user.click(viewButton);
+
+  const likeButton = screen.getByText('like');
+  await user.click(likeButton);
+  await user.click(likeButton);
+
+  expect(addLike.mock.calls).toHaveLength(2);
+});
