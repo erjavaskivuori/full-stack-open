@@ -1,10 +1,10 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
-
+const { loginWith, createBlog } = require('./helper')
 
 describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
-    await request.post('http://localhost:3003/api/testing/reset')
-    await request.post('http://localhost:3003/api/users', {
+    await request.post('/api/testing/reset')
+    await request.post('/api/users', {
       data: {
         name: 'Matti Luukkainen',
         username: 'mluukkai',
@@ -12,7 +12,7 @@ describe('Blog app', () => {
       }
     })
 
-    await page.goto('http://localhost:5173')
+    await page.goto('/')
   })
 
   test('Login form is shown', async ({ page }) => {
@@ -29,35 +29,22 @@ describe('Blog app', () => {
 
   describe('Login', () => {
     test('succeeds with correct credentials', async ({ page }) => {
-      await page.getByLabel('username').fill('mluukkai')
-      await page.getByLabel('password').fill('salainen')
-      await page.getByRole('button', { name: 'login' }).click()
-
+      await loginWith(page, 'mluukkai', 'salainen')
       await expect(page.getByText('Matti Luukkainen logged in')).toBeVisible()
     })
 
     test('fails with wrong credentials', async ({ page }) => {
-      await page.getByLabel('username').fill('mluukkai')
-      await page.getByLabel('password').fill('wrong_pswd')
-      await page.getByRole('button', { name: 'login' }).click()
-
+      await loginWith(page, 'mluukkai', 'wrong_pswd')
       await expect(page.getByText('wrong username or password')).toBeVisible()
     })
   })
   describe('When logged in', () => {
     beforeEach(async ({ page }) => {
-      await page.getByLabel('username').fill('mluukkai')
-      await page.getByLabel('password').fill('salainen')
-      await page.getByRole('button', { name: 'login' }).click()
+      await loginWith(page, 'mluukkai', 'salainen')
     })
 
     test('a new blog can be created', async ({ page }) => {
-      await page.getByRole('button', { name: 'new blog' }).click()
-      await page.getByLabel('title').fill('Blog created by Playwright')
-      await page.getByLabel('author').fill('Test Author')
-      await page.getByLabel('url').fill('https://playwright.dev')
-      await page.getByRole('button', { name: 'create' }).click()
-
+      await createBlog(page, 'Blog created by Playwright', 'Test Author', 'https://playwright.dev')
       await expect(page
         .getByRole(
           'heading',
