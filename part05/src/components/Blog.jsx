@@ -29,7 +29,7 @@ const Blog = ({ blog, addLike, removeBlog, user }) => {
     marginBottom: 5
   }
   return (
-    <div style={blogStyle}>
+    <div data-testid='blog-container' style={blogStyle}>
       <h3>{blog.title} by {blog.author}</h3>
       {!blogVisible && (
         <button onClick={() => setBlogVisible(true)}>view</button>
@@ -41,9 +41,9 @@ const Blog = ({ blog, addLike, removeBlog, user }) => {
             <span data-testid='like-count'>likes {blog.likes}</span>
             <button onClick={handleLike}>like</button>
           </div>
-          <div>{blog.user ? blog.user.name : 'Unknown User'}</div>
+          <div>{blog.user.name}</div>
           <button onClick={() => setBlogVisible(false)}>hide</button>
-          {blog.user && blog.user.username === user.username && (
+          {blog.user.username === user.username && (
             <button
               onClick={handleRemoveBlog}
               style={{
