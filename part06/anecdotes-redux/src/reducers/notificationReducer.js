@@ -1,14 +1,23 @@
 import { createSlice } from '@reduxjs/toolkit'
 
+export const showNotification = (message) => {
+  return (dispatch) => {
+    dispatch(notificationChange(message))
+    setTimeout(() => {
+      dispatch(notificationReset())
+    }, 5000)
+  }
+}
+
 const notificationSlice = createSlice({
   name: 'notification',
-  initialState: 'this is a test notification',
+  initialState: '',
   reducers: {
     notificationChange(state, action) {
       return action.payload
     },
     notificationReset(state, action) {
-      return initialState
+      return ''
     },
   },
 })
