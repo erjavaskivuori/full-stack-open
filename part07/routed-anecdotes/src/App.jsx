@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import {
   useMatch, Routes, 
-  Route, Link
+  Route, Link,
+  useNavigate
 } from 'react-router-dom'
 
 const Menu = () => {
@@ -56,7 +57,7 @@ const CreateNew = (props) => {
   const [content, setContent] = useState('')
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
-
+  const navigate = useNavigate()
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -66,6 +67,7 @@ const CreateNew = (props) => {
       info,
       votes: 0
     })
+    navigate('/')
   }
 
   return (
@@ -92,7 +94,6 @@ const CreateNew = (props) => {
 }
 
 const Anecdote = ({ anecdote }) => {
-  console.log(anecdote)
   return (
     <div>
       <h1>{anecdote.content}</h1>
@@ -125,6 +126,7 @@ const App = () => {
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
     setAnecdotes(anecdotes.concat(anecdote))
+    handleSetNotification(`A new anecdote '${anecdote.content}' created!`)
   }
 
   const anecdoteById = (id) =>
@@ -146,10 +148,18 @@ const App = () => {
     ? anecdotes.find(anecdote => anecdote.id === Number(match.params.id))
     : null
 
+  const handleSetNotification = (message) => {
+    setNotification(message)
+    setTimeout(() => {
+      setNotification('')
+    }, 5000);
+  }
+
   return (
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
+      <p>{notification}</p>
       <Routes>
         <Route path='/create' element={<CreateNew addNew={addNew} />} />
         <Route path='/about' element={<About />} />
