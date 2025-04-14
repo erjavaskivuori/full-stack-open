@@ -20,7 +20,7 @@ const LoginForm = ({ login }) => {
           <label>
             username
             <input
-              name="username"
+              name='username'
               value={username}
               onChange={({ target }) => setUsername(target.value)}
               style={{ marginLeft: '10px' }}
@@ -31,15 +31,15 @@ const LoginForm = ({ login }) => {
           <label>
             password
             <input
-              name="password"
-              type="password"
+              name='password'
+              type='password'
               value={password}
               onChange={({ target }) => setPassword(target.value)}
               style={{ marginLeft: '10px' }}
             />
           </label>
         </div>
-        <button type="submit">login</button>
+        <button type='submit'>login</button>
       </form>
     </div>
   )

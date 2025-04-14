@@ -45,11 +45,9 @@ describe('Blog app', () => {
 
     test('a new blog can be created', async ({ page }) => {
       await createBlog(page, 'Blog created by Playwright', 'Test Author', 'https://playwright.dev')
-      await expect(page
-        .getByRole(
-          'heading',
-          { name: 'Blog created by Playwright by Test Author' }))
-        .toBeVisible()
+      await expect(
+        page.getByRole('heading', { name: 'Blog created by Playwright by Test Author' })
+      ).toBeVisible()
     })
 
     test('a blog can be liked', async ({ page }) => {
@@ -61,31 +59,38 @@ describe('Blog app', () => {
 
       await page.getByRole('button', { name: 'like' }).click()
 
-      await expect(likesElement).toHaveText(`likes ${likesBeginning + 1}`);
+      await expect(likesElement).toHaveText(`likes ${likesBeginning + 1}`)
     })
 
     test('a blog can be removed', async ({ page }) => {
       await createBlog(page, 'Blog created by Playwright', 'Test Author', 'https://playwright.dev')
-      const newBlog = page.getByTestId('blog-container')
-        .filter({ has: page.getByRole('heading', { name: 'Blog created by Playwright by Test Author' }) })
+      const newBlog = page
+        .getByTestId('blog-container')
+        .filter({
+          has: page.getByRole('heading', { name: 'Blog created by Playwright by Test Author' })
+        })
       await expect(newBlog).toBeVisible()
       page.reload()
       await newBlog.getByText('view').click()
-      page.on('dialog', dialog => dialog.accept())
+      page.on('dialog', (dialog) => dialog.accept())
       await newBlog.getByText('remove').click()
       await expect(page.getByText('Blog deleted successfully')).toBeVisible()
-      await expect(newBlog).toHaveCount(0);
+      await expect(newBlog).toHaveCount(0)
     })
 
     test('remove button is not shown for blogs created by other users', async ({ page }) => {
       await createBlog(page, 'Blog created by Playwright', 'Test Author', 'https://playwright.dev')
 
-      const newBlog = page.getByTestId('blog-container')
-        .filter({ has: page.getByRole('heading', { name: 'Blog created by Playwright by Test Author' }) })
+      const newBlog = page
+        .getByTestId('blog-container')
+        .filter({
+          has: page.getByRole('heading', { name: 'Blog created by Playwright by Test Author' })
+        })
       await expect(newBlog).toBeVisible()
       page.reload()
 
-      const initialBlog = page.getByTestId('blog-container')
+      const initialBlog = page
+        .getByTestId('blog-container')
         .filter({ has: page.getByRole('heading', { name: 'React patterns by Michael Chan' }) })
 
       await initialBlog.getByText('view').click()
@@ -97,8 +102,11 @@ describe('Blog app', () => {
     test('blogs are ordered by likes', async ({ page }) => {
       await createBlog(page, 'Blog created by Playwright', 'Test Author', 'https://playwright.dev')
 
-      const newBlog = page.getByTestId('blog-container')
-        .filter({ has: page.getByRole('heading', { name: 'Blog created by Playwright by Test Author' }) })
+      const newBlog = page
+        .getByTestId('blog-container')
+        .filter({
+          has: page.getByRole('heading', { name: 'Blog created by Playwright by Test Author' })
+        })
       await expect(newBlog).toBeVisible()
 
       const initialOrder = await page.getByTestId('blog-container').allInnerTexts()
@@ -110,7 +118,7 @@ describe('Blog app', () => {
       }
       await newBlog.getByText('hide').click()
       const updatedOrder = page.getByTestId('blog-container').allInnerTexts()
-      expect(updatedOrder).not.toEqual(initialOrder);
+      expect(updatedOrder).not.toEqual(initialOrder)
     })
   })
 })

@@ -16,9 +16,7 @@ const App = () => {
   const blogFormRef = useRef()
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )
+    blogService.getAll().then((blogs) => setBlogs(blogs))
   }, [])
 
   useEffect(() => {
@@ -42,11 +40,10 @@ const App = () => {
   const login = async (username, password) => {
     try {
       const user = await loginService.login({
-        username, password,
+        username,
+        password
       })
-      window.localStorage.setItem(
-        'loggedBlogappUser', JSON.stringify(user)
-      )
+      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
     } catch {
@@ -61,24 +58,23 @@ const App = () => {
 
   const createBlog = async (blogObject) => {
     try {
-      const blog = await blogService.create(
-        blogObject
-      )
+      const blog = await blogService.create(blogObject)
       blogFormRef.current.toggleVisibility()
       setBlogs(blogs.concat(blog))
 
       setNotification(`A new blog ${blog.title} by ${blog.author} added`, 'success')
     } catch (exception) {
-      setNotification('Error occured while creating a new blog. Did you fill all the fields?', 'error')
+      setNotification(
+        'Error occured while creating a new blog. Did you fill all the fields?',
+        'error'
+      )
     }
   }
 
   const addLike = async (id, blogObject) => {
     try {
-      const updatedBlog = await blogService.update(
-        id, blogObject
-      )
-      setBlogs(blogs.map(blog => blog.id !== id ? blog : updatedBlog))
+      const updatedBlog = await blogService.update(id, blogObject)
+      setBlogs(blogs.map((blog) => (blog.id !== id ? blog : updatedBlog)))
       setNotification(`A like added to the blog ${updatedBlog.title}`, 'success')
     } catch (exception) {
       setNotification('Error occured while adding a like to the blog', 'error')
@@ -88,7 +84,7 @@ const App = () => {
   const removeBlog = async (id) => {
     try {
       await blogService.remove(id)
-      setBlogs(blogs.filter(blog => blog.id !== id))
+      setBlogs(blogs.filter((blog) => blog.id !== id))
       setNotification('Blog deleted successfully', 'success')
     } catch (exception) {
       setNotification('Error occured while deleting the blog', 'error')
@@ -107,21 +103,20 @@ const App = () => {
   return (
     <div>
       <h2>Blogs</h2>
-      <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
+      <p>
+        {user.name} logged in <button onClick={handleLogout}>logout</button>
+      </p>
       <Notification message={message} type={messageType} />
       <Togglable buttonLabel='new blog' ref={blogFormRef}>
         <BlogForm createBlog={createBlog} />
       </Togglable>
       <div>
         <br />
-        {blogs.map(blog =>
-          <Blog
-            key={blog.id}
-            blog={blog}
-            addLike={addLike}
-            removeBlog={removeBlog}
-            user={user} />
-        ).sort((a, b) => b.props.blog.likes - a.props.blog.likes)}
+        {blogs
+          .map((blog) => (
+            <Blog key={blog.id} blog={blog} addLike={addLike} removeBlog={removeBlog} user={user} />
+          ))
+          .sort((a, b) => b.props.blog.likes - a.props.blog.likes)}
       </div>
     </div>
   )

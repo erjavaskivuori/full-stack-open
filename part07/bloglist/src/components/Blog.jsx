@@ -30,10 +30,10 @@ const Blog = ({ blog, addLike, removeBlog, user }) => {
   }
   return (
     <div data-testid='blog-container' style={blogStyle}>
-      <h3>{blog.title} by {blog.author}</h3>
-      {!blogVisible && (
-        <button onClick={() => setBlogVisible(true)}>view</button>
-      )}
+      <h3>
+        {blog.title} by {blog.author}
+      </h3>
+      {!blogVisible && <button onClick={() => setBlogVisible(true)}>view</button>}
       {blogVisible && (
         <div>
           <div>{blog.url}</div>
@@ -48,14 +48,16 @@ const Blog = ({ blog, addLike, removeBlog, user }) => {
               onClick={handleRemoveBlog}
               style={{
                 backgroundColor: 'red',
-                color: 'white',
-              }}>
+                color: 'white'
+              }}
+            >
               remove
             </button>
           )}
         </div>
       )}
     </div>
-  )}
+  )
+}
 
 export default Blog

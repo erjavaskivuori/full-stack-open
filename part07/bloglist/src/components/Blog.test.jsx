@@ -9,13 +9,13 @@ const blog = {
   likes: 42,
   user: {
     username: 'ada',
-    name: 'Ada Lovelace',
-  },
+    name: 'Ada Lovelace'
+  }
 }
 
 const blogUser = {
   username: 'ada',
-  name: 'Ada Lovelace',
+  name: 'Ada Lovelace'
 }
 
 describe('<Blog />', () => {

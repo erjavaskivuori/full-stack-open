@@ -7,7 +7,7 @@ const Notification = ({ message, type }) => {
     borderStyle: 'solid',
     borderRadius: 5,
     padding: 10,
-    margin: 10,
+    margin: 10
   }
   const errorStyle = {
     color: 'red',
@@ -17,13 +17,11 @@ const Notification = ({ message, type }) => {
     borderStyle: 'solid',
     borderRadius: 5,
     padding: 10,
-    margin: 10,
+    margin: 10
   }
   if (message === null) {
     return null
-  }
-
-  else if (type === 'success')
+  } else if (type === 'success')
     return (
       <div style={notificationStyle}>
         <em>{message}</em>
