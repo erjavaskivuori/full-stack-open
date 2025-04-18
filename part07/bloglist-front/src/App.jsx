@@ -1,23 +1,21 @@
-import { useState, useEffect, useRef } from 'react'
-import { useDispatch } from 'react-redux'
+import { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import LoginForm from './components/Login'
 import BlogForm from './components/BlogForm'
-import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { showNotification } from './reducers/notificationReducer'
+import { initializeBlogs } from './reducers/blogReducer'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  const blogs = useSelector((state) => state.blogs)
   const [user, setUser] = useState(null)
   const dispatch = useDispatch()
 
-  const blogFormRef = useRef()
-
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
+    dispatch(initializeBlogs())
   }, [])
 
   useEffect(() => {
@@ -46,23 +44,6 @@ const App = () => {
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogappUser')
     setUser(null)
-  }
-
-  const createBlog = async (blogObject) => {
-    try {
-      const blog = await blogService.create(blogObject)
-      blogFormRef.current.toggleVisibility()
-      setBlogs(blogs.concat(blog))
-
-      dispatch(showNotification(`A new blog ${blog.title} by ${blog.author} added`, 'success'))
-    } catch (exception) {
-      dispatch(
-        showNotification(
-          'Error occured while creating a new blog. Did you fill all the fields?',
-          'error'
-        )
-      )
-    }
   }
 
   const addLike = async (id, blogObject) => {
@@ -101,9 +82,7 @@ const App = () => {
         {user.name} logged in <button onClick={handleLogout}>logout</button>
       </p>
       <Notification />
-      <Togglable buttonLabel='new blog' ref={blogFormRef}>
-        <BlogForm createBlog={createBlog} />
-      </Togglable>
+      <BlogForm />
       <div>
         <br />
         {blogs
