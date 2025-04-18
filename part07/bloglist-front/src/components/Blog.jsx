@@ -1,7 +1,11 @@
 import { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { showNotification } from '../reducers/notificationReducer'
+import { deleteBlog, likeBlog } from '../reducers/blogReducer'
 
 const Blog = ({ blog, addLike, removeBlog, user }) => {
   const [blogVisible, setBlogVisible] = useState(false)
+  const dispatch = useDispatch()
 
   const handleLike = async () => {
     const blogObject = {
@@ -11,12 +15,24 @@ const Blog = ({ blog, addLike, removeBlog, user }) => {
       likes: blog.likes + 1,
       user: blog.user.id
     }
-    addLike(blog.id, blogObject)
+    const id = blog.id
+    try {
+      const updatedBlog = await dispatch(likeBlog({ id, blogObject })).unwrap()
+      dispatch(showNotification(`A like added to the blog ${updatedBlog.title}`, 'success'))
+    } catch (exception) {
+      dispatch(showNotification('Error occured while adding a like to the blog', 'error'))
+    }
   }
 
   const handleRemoveBlog = async () => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-      removeBlog(blog.id)
+      const id = blog.id
+      try {
+        await dispatch(deleteBlog(id)).unwrap()
+        dispatch(showNotification('Blog deleted successfully', 'success'))
+      } catch (exception) {
+        dispatch(showNotification('Error occured while deleting the blog', 'error'))
+      }
     }
   }
 

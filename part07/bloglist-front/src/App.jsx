@@ -46,26 +46,6 @@ const App = () => {
     setUser(null)
   }
 
-  const addLike = async (id, blogObject) => {
-    try {
-      const updatedBlog = await blogService.update(id, blogObject)
-      setBlogs(blogs.map((blog) => (blog.id !== id ? blog : updatedBlog)))
-      dispatch(showNotification(`A like added to the blog ${updatedBlog.title}`, 'success'))
-    } catch (exception) {
-      dispatch(showNotification('Error occured while adding a like to the blog', 'error'))
-    }
-  }
-
-  const removeBlog = async (id) => {
-    try {
-      await blogService.remove(id)
-      setBlogs(blogs.filter((blog) => blog.id !== id))
-      showNotification('Blog deleted successfully', 'success')
-    } catch (exception) {
-      showNotification('Error occured while deleting the blog', 'error')
-    }
-  }
-
   if (user === null) {
     return (
       <div>
@@ -87,7 +67,7 @@ const App = () => {
         <br />
         {blogs
           .map((blog) => (
-            <Blog key={blog.id} blog={blog} addLike={addLike} removeBlog={removeBlog} user={user} />
+            <Blog key={blog.id} blog={blog} user={user} />
           ))
           .sort((a, b) => b.props.blog.likes - a.props.blog.likes)}
       </div>

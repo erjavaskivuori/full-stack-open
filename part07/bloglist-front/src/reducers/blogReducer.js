@@ -13,9 +13,21 @@ const blogSlice = createSlice({
     builder.addCase(addBlog.fulfilled, (state, action) => {
       state.push(action.payload)
     })
-    // Optional: handle pending and rejected if you want to show loading or errors
     builder.addCase(addBlog.rejected, (state, action) => {
       console.error('Failed to add blog:', action.payload)
+    })
+    builder.addCase(likeBlog.fulfilled, (state, action) => {
+      const likedBlog = action.payload
+      return state.map((blog) => (blog.id !== likedBlog.id ? blog : likedBlog))
+    })
+    builder.addCase(likeBlog.rejected, (state, action) => {
+      console.error('Failed to like blog:', action.payload)
+    })
+    builder.addCase(deleteBlog.fulfilled, (state, action) => {
+      return state.filter((blog) => blog.id !== action.payload.id)
+    })
+    builder.addCase(deleteBlog.rejected, (state, action) => {
+      console.error('Failed to remove blog:', action.payload)
     })
   }
 })
@@ -40,5 +52,26 @@ export const addBlog = createAsyncThunk(
     }
   }
 )
+
+export const likeBlog = createAsyncThunk(
+  'blogs/likeBlog',
+  async ({ id, blogObject }, { rejectWithValue }) => {
+    try {
+      const data = await blogService.update(id, blogObject)
+      return data
+    } catch {
+      return rejectWithValue(error.response?.data || error.message)
+    }
+  }
+)
+
+export const deleteBlog = createAsyncThunk('blogs/deleteBlog', async (id, { rejectWithValue }) => {
+  try {
+    await blogService.remove(id)
+    return { id }
+  } catch {
+    return rejectWithValue(error.response?.data || error.message)
+  }
+})
 
 export default blogSlice.reducer
