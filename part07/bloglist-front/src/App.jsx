@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useDispatch } from 'react-redux'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import LoginForm from './components/Login'
@@ -6,12 +7,12 @@ import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { showNotification } from './reducers/notificationReducer'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [message, setMessage] = useState(null)
-  const [messageType, setMessageType] = useState('')
   const [user, setUser] = useState(null)
+  const dispatch = useDispatch()
 
   const blogFormRef = useRef()
 
@@ -28,15 +29,6 @@ const App = () => {
     }
   }, [])
 
-  const setNotification = (message, type) => {
-    setMessage(message)
-    setMessageType(type)
-    setTimeout(() => {
-      setMessage(null)
-      setMessageType('')
-    }, 5000)
-  }
-
   const login = async (username, password) => {
     try {
       const user = await loginService.login({
@@ -47,7 +39,7 @@ const App = () => {
       blogService.setToken(user.token)
       setUser(user)
     } catch {
-      setNotification('wrong username or password', 'error')
+      dispatch(showNotification('wrong username or password', 'error'))
     }
   }
 
@@ -62,11 +54,13 @@ const App = () => {
       blogFormRef.current.toggleVisibility()
       setBlogs(blogs.concat(blog))
 
-      setNotification(`A new blog ${blog.title} by ${blog.author} added`, 'success')
+      dispatch(showNotification(`A new blog ${blog.title} by ${blog.author} added`, 'success'))
     } catch (exception) {
-      setNotification(
-        'Error occured while creating a new blog. Did you fill all the fields?',
-        'error'
+      dispatch(
+        showNotification(
+          'Error occured while creating a new blog. Did you fill all the fields?',
+          'error'
+        )
       )
     }
   }
@@ -75,9 +69,9 @@ const App = () => {
     try {
       const updatedBlog = await blogService.update(id, blogObject)
       setBlogs(blogs.map((blog) => (blog.id !== id ? blog : updatedBlog)))
-      setNotification(`A like added to the blog ${updatedBlog.title}`, 'success')
+      dispatch(showNotification(`A like added to the blog ${updatedBlog.title}`, 'success'))
     } catch (exception) {
-      setNotification('Error occured while adding a like to the blog', 'error')
+      dispatch(showNotification('Error occured while adding a like to the blog', 'error'))
     }
   }
 
@@ -85,16 +79,16 @@ const App = () => {
     try {
       await blogService.remove(id)
       setBlogs(blogs.filter((blog) => blog.id !== id))
-      setNotification('Blog deleted successfully', 'success')
+      showNotification('Blog deleted successfully', 'success')
     } catch (exception) {
-      setNotification('Error occured while deleting the blog', 'error')
+      showNotification('Error occured while deleting the blog', 'error')
     }
   }
 
   if (user === null) {
     return (
       <div>
-        <Notification message={message} type={messageType} />
+        <Notification />
         <LoginForm login={login} />
       </div>
     )
@@ -106,7 +100,7 @@ const App = () => {
       <p>
         {user.name} logged in <button onClick={handleLogout}>logout</button>
       </p>
-      <Notification message={message} type={messageType} />
+      <Notification />
       <Togglable buttonLabel='new blog' ref={blogFormRef}>
         <BlogForm createBlog={createBlog} />
       </Togglable>
