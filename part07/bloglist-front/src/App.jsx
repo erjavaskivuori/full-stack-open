@@ -1,17 +1,16 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import LoginForm from './components/Login'
 import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
-import loginService from './services/login'
-import { showNotification } from './reducers/notificationReducer'
 import { initializeBlogs } from './reducers/blogReducer'
+import { resetUser, setUser } from './reducers/userReducer'
 
 const App = () => {
   const blogs = useSelector((state) => state.blogs)
-  const [user, setUser] = useState(null)
+  const user = useSelector((state) => state.user)
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -22,35 +21,21 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+      dispatch(setUser(user))
       blogService.setToken(user.token)
     }
-  }, [])
-
-  const login = async (username, password) => {
-    try {
-      const user = await loginService.login({
-        username,
-        password
-      })
-      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
-      blogService.setToken(user.token)
-      setUser(user)
-    } catch {
-      dispatch(showNotification('wrong username or password', 'error'))
-    }
-  }
+  }, [dispatch])
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogappUser')
-    setUser(null)
+    dispatch(resetUser())
   }
 
   if (user === null) {
     return (
       <div>
         <Notification />
-        <LoginForm login={login} />
+        <LoginForm />
       </div>
     )
   }
@@ -66,9 +51,7 @@ const App = () => {
       <div>
         <br />
         {blogs
-          .map((blog) => (
-            <Blog key={blog.id} blog={blog} user={user} />
-          ))
+          .map((blog) => <Blog key={blog.id} blog={blog} user={user} />)
           .sort((a, b) => b.props.blog.likes - a.props.blog.likes)}
       </div>
     </div>

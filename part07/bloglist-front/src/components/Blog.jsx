@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { showNotification } from '../reducers/notificationReducer'
 import { deleteBlog, likeBlog } from '../reducers/blogReducer'
 
-const Blog = ({ blog, addLike, removeBlog, user }) => {
+const Blog = ({ blog }) => {
   const [blogVisible, setBlogVisible] = useState(false)
   const dispatch = useDispatch()
+  const user = useSelector((state) => state.user)
 
   const handleLike = async () => {
     const blogObject = {
