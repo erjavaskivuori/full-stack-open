@@ -4,6 +4,7 @@ import { Routes, Route, Link, useMatch } from 'react-router-dom'
 import Notification from './components/Notification'
 import LoginForm from './components/Login'
 import BlogList from './components/BlogList'
+import Blog from './components/Blog'
 import Users from './components/Users'
 import User from './components/User'
 import blogService from './services/blogs'
@@ -14,6 +15,7 @@ import { fetchUsers } from './reducers/usersReducer'
 const App = () => {
   const user = useSelector((state) => state.user)
   const users = useSelector((state) => state.users)
+  const blogs = useSelector((state) => state.blogs)
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -38,9 +40,14 @@ const App = () => {
     dispatch(resetUser())
   }
 
-  const match = useMatch('/users/:id')
-  const userToShow = match
-    ? users.find((user) => user.id === match.params.id)
+  const userMatch = useMatch('/users/:id')
+  const userToShow = userMatch
+    ? users.find((user) => user.id === userMatch.params.id)
+    : null
+
+  const blogMatch = useMatch('/blogs/:id')
+  const blog = blogMatch
+    ? blogs.find((blog) => blog.id === blogMatch.params.id)
     : null
 
   if (user === null) {
@@ -68,6 +75,7 @@ const App = () => {
       </div>
 
       <Routes>
+        <Route path='/blogs/:id' element={<Blog blog={blog} />} />
         <Route path='/users/:id' element={<User user={userToShow} />} />
         <Route path='/users' element={<Users />} />
         <Route path='/' element={<BlogList />} />

@@ -1,11 +1,11 @@
-import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { showNotification } from '../reducers/notificationReducer'
 import { deleteBlog, likeBlog } from '../reducers/blogReducer'
 
 const Blog = ({ blog }) => {
-  const [blogVisible, setBlogVisible] = useState(false)
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const user = useSelector((state) => state.user)
 
   const handleLike = async () => {
@@ -19,9 +19,19 @@ const Blog = ({ blog }) => {
     const id = blog.id
     try {
       const updatedBlog = await dispatch(likeBlog({ id, blogObject })).unwrap()
-      dispatch(showNotification(`A like added to the blog ${updatedBlog.title}`, 'success'))
+      dispatch(
+        showNotification(
+          `A like added to the blog ${updatedBlog.title}`,
+          'success'
+        )
+      )
     } catch (exception) {
-      dispatch(showNotification('Error occured while adding a like to the blog', 'error'))
+      dispatch(
+        showNotification(
+          'Error occured while adding a like to the blog',
+          'error'
+        )
+      )
     }
   }
 
@@ -31,46 +41,51 @@ const Blog = ({ blog }) => {
       try {
         await dispatch(deleteBlog(id)).unwrap()
         dispatch(showNotification('Blog deleted successfully', 'success'))
+        navigate('/')
       } catch (exception) {
-        dispatch(showNotification('Error occured while deleting the blog', 'error'))
+        dispatch(
+          showNotification('Error occured while deleting the blog', 'error')
+        )
       }
     }
   }
 
-  const blogStyle = {
-    padding: 5,
-    paddingLeft: 10,
-    border: 'solid',
-    borderWidth: 1,
-    borderRadius: 5,
-    marginBottom: 5
-  }
   return (
-    <div data-testid='blog-container' style={blogStyle}>
-      <h3>
-        {blog.title} by {blog.author}
-      </h3>
-      {!blogVisible && <button onClick={() => setBlogVisible(true)}>view</button>}
-      {blogVisible && (
+    <div data-testid='blog-container'>
+      {blog && (
         <div>
-          <div>{blog.url}</div>
+          <h3>
+            {blog.title} by {blog.author}
+          </h3>
           <div>
-            <span data-testid='like-count'>likes {blog.likes}</span>
-            <button onClick={handleLike}>like</button>
+            <div>
+              <a
+                href={
+                  blog.url.startsWith('http') ? blog.url : `https://${blog.url}`
+                }
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                {blog.url}
+              </a>
+            </div>
+            <div>
+              <span data-testid='like-count'>Likes: {blog.likes}</span>
+              <button onClick={handleLike}>like</button>
+            </div>
+            <div>Added by {blog.user.name}</div>
+            {blog.user.username === user.username && (
+              <button
+                onClick={handleRemoveBlog}
+                style={{
+                  backgroundColor: 'red',
+                  color: 'white'
+                }}
+              >
+                remove
+              </button>
+            )}
           </div>
-          <div>{blog.user.name}</div>
-          <button onClick={() => setBlogVisible(false)}>hide</button>
-          {blog.user.username === user.username && (
-            <button
-              onClick={handleRemoveBlog}
-              style={{
-                backgroundColor: 'red',
-                color: 'white'
-              }}
-            >
-              remove
-            </button>
-          )}
         </div>
       )}
     </div>
