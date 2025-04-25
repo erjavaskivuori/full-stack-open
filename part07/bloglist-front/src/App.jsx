@@ -56,20 +56,24 @@ const App = () => {
   }
 
   return (
-    <div>
-      <Navigation />
+    <div className='flex justify-center bg-blue-200 min-h-screen'>
+      <div className='w-[900px] py-5'>
+        <div className='text-left'>
+          <Navigation />
 
-      <div>
-        <h2>Blogs</h2>
-        <Notification />
+          <div>
+            <h1 className='text-2xl py-2'>Blog app</h1>
+            <Notification />
+          </div>
+
+          <Routes>
+            <Route path='/blogs/:id' element={<Blog blog={blog} />} />
+            <Route path='/users/:id' element={<User user={userToShow} />} />
+            <Route path='/users' element={<Users />} />
+            <Route path='/' element={<BlogList />} />
+          </Routes>
+        </div>
       </div>
-
-      <Routes>
-        <Route path='/blogs/:id' element={<Blog blog={blog} />} />
-        <Route path='/users/:id' element={<User user={userToShow} />} />
-        <Route path='/users' element={<Users />} />
-        <Route path='/' element={<BlogList />} />
-      </Routes>
     </div>
   )
 }

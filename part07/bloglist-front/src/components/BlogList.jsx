@@ -7,32 +7,21 @@ const BlogList = () => {
   const blogs = useSelector((state) => state.blogs)
   const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes)
 
-  const blogStyle = {
-    padding: 5,
-    paddingLeft: 10,
-    border: 'solid',
-    borderWidth: 1,
-    borderRadius: 5,
-    marginBottom: 5
-  }
-
   return (
     <div>
       <BlogForm />
       <br />
-      <table>
-        <tbody>
-          {sortedBlogs.map((blog) => (
-            <tr key={blog.id}>
-              <td style={blogStyle}>
-                <Link to={`/blogs/${blog.id}`}>
-                  {blog.title} by {blog.author}
-                </Link>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <ul>
+        {sortedBlogs.map((blog) => (
+          <li key={blog.id}>
+            <div className='w-auto p-4 bg-white border border-gray-200 rounded-lg shadow-sm my-2'>
+              <Link to={`/blogs/${blog.id}`}>
+                <p className='text-xl'>{blog.title} by {blog.author}</p>
+              </Link>
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

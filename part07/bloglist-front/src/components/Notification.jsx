@@ -2,37 +2,17 @@ import { useSelector } from 'react-redux'
 
 const Notification = () => {
   const { message, type } = useSelector((state) => state.notification)
-  const notificationStyle = {
-    color: 'green',
-    fontStyle: 'italic',
-    background: 'lightgrey',
-    fontSize: 20,
-    borderStyle: 'solid',
-    borderRadius: 5,
-    padding: 10,
-    margin: 10
-  }
-  const errorStyle = {
-    color: 'red',
-    fontStyle: 'italic',
-    background: 'lightgrey',
-    fontSize: 20,
-    borderStyle: 'solid',
-    borderRadius: 5,
-    padding: 10,
-    margin: 10
-  }
   if (message === null) {
     return null
   } else if (type === 'success')
     return (
-      <div style={notificationStyle}>
+      <div className='text-green-700 border-2 rounded-lg p-3 mt-3'>
         <em>{message}</em>
       </div>
     )
   else if (type === 'error')
     return (
-      <div style={errorStyle}>
+      <div className='text-red-700 border-2 rounded-lg p-3 mt-3'>
         <em>{message}</em>
       </div>
     )

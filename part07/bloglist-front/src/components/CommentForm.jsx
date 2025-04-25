@@ -13,10 +13,8 @@ const CommentForm = ({ id }) => {
       text: comment
     }
     try {
-      const newComment = await dispatch(
-        addComment({ id, commentObject })
-      ).unwrap()
-      dispatch(showNotification(`A new comment "${newComment.text}" added`))
+      await dispatch(addComment({ id, commentObject })).unwrap()
+      dispatch(showNotification(`A new comment "${comment}" added`, 'success'))
     } catch (exception) {
       dispatch(
         showNotification('Error occured while adding new comment.', 'error')
@@ -33,8 +31,14 @@ const CommentForm = ({ id }) => {
         type='text'
         value={comment}
         onChange={({ target }) => setComment(target.value)}
+        className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2 mr-2'
       />
-      <button type='submit'>add</button>
+      <button
+        type='submit'
+        className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-lg mb-2'
+      >
+        add
+      </button>
     </form>
   )
 }

@@ -23,34 +23,43 @@ const LoginForm = () => {
   }
 
   return (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          <label>
-            username
-            <input
-              name='username'
-              value={username}
-              onChange={({ target }) => setUsername(target.value)}
-              style={{ marginLeft: '10px' }}
-            />
-          </label>
+    <div className='flex justify-center bg-blue-200 min-h-screen'>
+      <div className='w-[900px] py-5'>
+        <div className='text-left'>
+          <h2>Login</h2>
+          <form onSubmit={handleLogin}>
+            <div className='my-2'>
+              <label>
+                username
+                <input
+                  name='username'
+                  value={username}
+                  onChange={({ target }) => setUsername(target.value)}
+                  className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2 ml-3'
+                />
+              </label>
+            </div>
+            <div className='my-2'>
+              <label>
+                password
+                <input
+                  name='password'
+                  type='password'
+                  value={password}
+                  onChange={({ target }) => setPassword(target.value)}
+                  className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2 ml-3'
+                />
+              </label>
+            </div>
+            <button
+              type='submit'
+              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded mb-2'
+            >
+              login
+            </button>
+          </form>
         </div>
-        <div>
-          <label>
-            password
-            <input
-              name='password'
-              type='password'
-              value={password}
-              onChange={({ target }) => setPassword(target.value)}
-              style={{ marginLeft: '10px' }}
-            />
-          </label>
-        </div>
-        <button type='submit'>login</button>
-      </form>
+      </div>
     </div>
   )
 }
