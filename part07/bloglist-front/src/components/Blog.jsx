@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { showNotification } from '../reducers/notificationReducer'
 import { deleteBlog, likeBlog } from '../reducers/blogReducer'
+import CommentForm from './CommentForm'
 
 const Blog = ({ blog }) => {
   const dispatch = useDispatch()
@@ -87,6 +88,7 @@ const Blog = ({ blog }) => {
             )}
           </div>
           <h3>Comments</h3>
+          <CommentForm id={blog.id} />
           <ul>
             {blog.comments.map((comment) => (
               <li key={comment._id}>{comment.text}</li>

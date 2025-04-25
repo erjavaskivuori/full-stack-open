@@ -29,6 +29,13 @@ const blogSlice = createSlice({
     builder.addCase(deleteBlog.rejected, (state, action) => {
       console.error('Failed to remove blog:', action.payload)
     })
+    builder.addCase(addComment.fulfilled, (state, action) => {
+      const commentedBlog = action.payload
+      return state.map((blog) => (blog.id !== commentedBlog.id ? blog : commentedBlog))
+    })
+    builder.addCase(addComment.rejected, (state, action) => {
+      console.error('Failed to add comment:', action.payload)
+    })
   }
 })
 
@@ -65,13 +72,28 @@ export const likeBlog = createAsyncThunk(
   }
 )
 
-export const deleteBlog = createAsyncThunk('blogs/deleteBlog', async (id, { rejectWithValue }) => {
-  try {
-    await blogService.remove(id)
-    return { id }
-  } catch {
-    return rejectWithValue(error.response?.data || error.message)
+export const deleteBlog = createAsyncThunk(
+  'blogs/deleteBlog',
+  async (id, { rejectWithValue }) => {
+    try {
+      await blogService.remove(id)
+      return { id }
+    } catch {
+      return rejectWithValue(error.response?.data || error.message)
+    }
   }
-})
+)
+
+export const addComment = createAsyncThunk(
+  'blogs/addComment',
+  async ({ id, commentObject }, { rejectWithValue }) => {
+    try {
+      const data = await blogService.createComment(id, commentObject)
+      return data
+    } catch {
+      return rejectWithValue(error.response?.data || error.message)
+    }
+  }
+)
 
 export default blogSlice.reducer
