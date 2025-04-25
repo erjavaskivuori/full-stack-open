@@ -1,15 +1,16 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Routes, Route, Link, useMatch } from 'react-router-dom'
+import { Routes, Route, useMatch } from 'react-router-dom'
 import Notification from './components/Notification'
 import LoginForm from './components/Login'
 import BlogList from './components/BlogList'
 import Blog from './components/Blog'
 import Users from './components/Users'
 import User from './components/User'
+import Navigation from './components/Navigation'
 import blogService from './services/blogs'
 import { initializeBlogs } from './reducers/blogReducer'
-import { resetUser, setUser } from './reducers/userReducer'
+import { setUser } from './reducers/userReducer'
 import { fetchUsers } from './reducers/usersReducer'
 
 const App = () => {
@@ -35,11 +36,6 @@ const App = () => {
     }
   }, [dispatch])
 
-  const handleLogout = () => {
-    window.localStorage.removeItem('loggedBlogappUser')
-    dispatch(resetUser())
-  }
-
   const userMatch = useMatch('/users/:id')
   const userToShow = userMatch
     ? users.find((user) => user.id === userMatch.params.id)
@@ -61,16 +57,10 @@ const App = () => {
 
   return (
     <div>
-      <div>
-        <Link to='/'>home</Link>
-        <Link to='/users'>users</Link>
-      </div>
+      <Navigation />
 
       <div>
         <h2>Blogs</h2>
-        <p>
-          {user.name} logged in <button onClick={handleLogout}>logout</button>
-        </p>
         <Notification />
       </div>
 
