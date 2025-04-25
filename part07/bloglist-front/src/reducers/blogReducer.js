@@ -31,7 +31,9 @@ const blogSlice = createSlice({
     })
     builder.addCase(addComment.fulfilled, (state, action) => {
       const commentedBlog = action.payload
-      return state.map((blog) => (blog.id !== commentedBlog.id ? blog : commentedBlog))
+      return state.map((blog) =>
+        blog.id !== commentedBlog.id ? blog : commentedBlog
+      )
     })
     builder.addCase(addComment.rejected, (state, action) => {
       console.error('Failed to add comment:', action.payload)
@@ -62,9 +64,9 @@ export const addBlog = createAsyncThunk(
 
 export const likeBlog = createAsyncThunk(
   'blogs/likeBlog',
-  async ({ id, blogObject }, { rejectWithValue }) => {
+  async ({ id, updatedLikes }, { rejectWithValue }) => {
     try {
-      const data = await blogService.update(id, blogObject)
+      const data = await blogService.update(id, updatedLikes)
       return data
     } catch {
       return rejectWithValue(error.response?.data || error.message)

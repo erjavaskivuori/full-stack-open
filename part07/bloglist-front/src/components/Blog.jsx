@@ -10,16 +10,12 @@ const Blog = ({ blog }) => {
   const user = useSelector((state) => state.user)
 
   const handleLike = async () => {
-    const blogObject = {
-      title: blog.title,
-      author: blog.author,
-      url: blog.url,
-      likes: blog.likes + 1,
-      user: blog.user.id
+    const updatedLikes = {
+      likes: blog.likes + 1
     }
     const id = blog.id
     try {
-      const updatedBlog = await dispatch(likeBlog({ id, blogObject })).unwrap()
+      const updatedBlog = await dispatch(likeBlog({ id, updatedLikes })).unwrap()
       dispatch(
         showNotification(
           `A like added to the blog ${updatedBlog.title}`,
