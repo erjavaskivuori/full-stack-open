@@ -13,26 +13,33 @@ interface ExerciseValues {
   target: number;
 }
 
-const parseExerciseArguments = (args: string[]): ExerciseValues => {
+export const parseExerciseArguments = (args: string[]): ExerciseValues => {
   if (args.length < 4) throw new Error('Not enough arguments');
-  const exercises = args.slice(3, args.length).map(Number);
-  const target = Number(args[2]);
+  const exercises = args.slice(3, args.length);
+  const target = args[2];
 
-  if (!exercises.every((value) => !isNaN(value))) {
-    throw new Error('Exercise hours must be given as numbers.');
+  return validateExerciseInputs(exercises, target);
+};
+
+export const validateExerciseInputs = (exercises: unknown, target: unknown): ExerciseValues => {
+  if (!Array.isArray(exercises) || exercises.length === 0) {
+    throw new Error('Parameters missing');
   }
 
-  if (isNaN(target)) {
-    throw new Error('Target must be a number.');
+  if (
+    !exercises.every((value) => !isNaN(Number(value))) ||
+    isNaN(Number(target))
+  ) {
+    throw new Error('Malformatted parameters');
   }
 
   return {
-    exercises,
-    target
+    exercises: exercises.map((value) => Number(value)),
+    target: Number(target)
   };
 };
 
-const determineRating = (
+export const determineRating = (
   average: number,
   target: number
 ): { rating: number; description: string } => {
@@ -45,7 +52,7 @@ const determineRating = (
   }
 };
 
-const exerciseCalculator = (
+export const exerciseCalculator = (
   exercises: Array<number>,
   target: number
 ): Result => {
@@ -72,14 +79,16 @@ const exerciseCalculator = (
   };
 };
 
-try {
-  const { exercises, target } = parseExerciseArguments(process.argv);
-  const result = exerciseCalculator(exercises, target);
-  console.log(result);
-} catch (error: unknown) {
-  let errorMessage = ' An error occured.';
-  if (error instanceof Error) {
-    errorMessage += ' Error: ' + error.message;
+if (require.main === module) {
+  try {
+    const { exercises, target } = parseExerciseArguments(process.argv);
+    const result = exerciseCalculator(exercises, target);
+    console.log(result);
+  } catch (error: unknown) {
+    let errorMessage = ' An error occured.';
+    if (error instanceof Error) {
+      errorMessage += ' Error: ' + error.message;
+    }
+    console.log(errorMessage);
   }
-  console.log(errorMessage);
 }

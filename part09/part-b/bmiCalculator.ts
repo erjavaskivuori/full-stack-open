@@ -6,10 +6,10 @@ interface BmiValues {
 const parseArguments = (args: string[]): BmiValues => {
   if (args.length < 4) throw new Error('Not enough arguments');
   if (args.length > 4) throw new Error('Too many arguments');
-  return validateArguments(args[2], args[3]);
+  return validateBmiInputs(args[2], args[3]);
 };
 
-export const validateArguments = (
+export const validateBmiInputs = (
   weight: unknown,
   height: unknown
 ): BmiValues => {
